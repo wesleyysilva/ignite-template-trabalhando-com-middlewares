@@ -16,24 +16,24 @@ describe('checksExistsUserAccount', () => {
     request = (params) => {
       return {
         ...params
-      }
+      };
     };
 
     response = () => {
-      const response = {}
+      const response = {};
 
       response.status = jest.fn((code) => {
         return {
           ...response,
           statusCode: code
-        }
+        };
       });
 
       response.json = jest.fn((obj) => {
         return {
           ...response,
           body: obj
-        }
+        };
       });
 
       return response;
@@ -51,7 +51,7 @@ describe('checksExistsUserAccount', () => {
       todos: []
     });
 
-    const mockUserSetter = jest.fn((userData) => { this.user = userData });
+    const mockUserSetter = jest.fn((userData) => { this.user = userData; });
 
     const mockRequest = request({ headers: { username: 'atlas' } });
     mockRequest.__defineSetter__('user', mockUserSetter);
@@ -78,4 +78,4 @@ describe('checksExistsUserAccount', () => {
 
     expect(mockResponse.status).toBeCalledWith(404);
   });
-})
+});
