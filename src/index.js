@@ -28,10 +28,18 @@ function checksExistsUserAccount(request, response, next) {
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
 
-  if (((user.pro === false) && (Array.length(user.todos) < 10))
-    || (user.pro = true)) {
+  if (user.pro === true) {
     return next();
   }
+
+  if ((user.pro === false) && (user.todos.length < 10)) {
+    return next();
+  }
+
+  if ((user.pro === false) && (user.todos.length >= 10)) {
+    return response.status(403).json({ error: 'Todo unavailable' });
+  }
+
 }
 
 function checksTodoExists(request, response, next) {
@@ -40,13 +48,20 @@ function checksTodoExists(request, response, next) {
 
   const user = users.find((user) => user.username === username);
 
+  if (!validate(id)) {
+    return response.status(400).json({
+      error: 'Todo invalid'
+    });
+
+  }
+
   if (!user) {
     return response.status(404).json({
       error: 'User does not exists'
     });
   }
 
-  const todo = users.todos.find(todo => todo.id === id);
+  const todo = user.todos.find(todo => todo.id === id);
 
   if (!todo) {
     return response.status(404).json({
@@ -55,12 +70,23 @@ function checksTodoExists(request, response, next) {
   }
 
   request.user = user;
+  request.todo = todo;
 
   return next();
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+
+  const user = users.find((user) => user.id === id);
+
+  if (!user) {
+    return response.status(404).json({
+      error: 'User does not exists'
+    });
+  }
+
+  return next();
 }
 
 app.post('/users', (request, response) => {
