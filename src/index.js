@@ -86,6 +86,8 @@ function findUserById(request, response, next) {
     });
   }
 
+  request.user = user;
+
   return next();
 }
 
